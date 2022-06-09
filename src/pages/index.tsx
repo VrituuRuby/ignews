@@ -37,6 +37,8 @@ export default function Home({ product } : homeProps) {
   )
 }
 
+
+//StaticSiteGeneration -> This code runs in next's node layer in the browser - not a 24h running server
 export const getStaticProps : GetStaticProps = async () => {
   const price = await stripe.prices.retrieve('price_1Kwvr9G9KraP7hISPNHRaN0N')
 
