@@ -14,11 +14,12 @@ type User = {
 }
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
+  //only allows POST method
   if(req.method === 'POST'){
+    //gets the session from NextAuth context provider
     const session = await getSession({req})
 
-
-
+    //gets user by the github email
     const user = await fauna.query<User>(
           q.Get(
           q.Match(
@@ -30,6 +31,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     let customerId = user.data.stripe_customer_id
 
+    //checks if there is a user with an id equals in the database, creating a new user otherwise
     if (!customerId) {
       const stripeCustomer = await stripe.customers.create({
       email: session.user.email,
@@ -60,8 +62,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       ],
       mode: 'subscription',
       allow_promotion_codes: true,
-      success_url: 'http://localhost/3000/posts',
-      cancel_url: 'http://localhost/3000'
+      success_url: 'http://localhost:3000/posts',
+      cancel_url: 'http://localhost:3000'
     })
 
     return res.status(200).json({ sessionId: stripeChecktoutSession.id })
