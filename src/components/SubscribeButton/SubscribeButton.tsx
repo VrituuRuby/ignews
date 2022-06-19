@@ -1,4 +1,5 @@
 import { signIn, useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
 import { api } from '../../services/api';
 import { getStripeJs } from '../../services/stripe-js';
 import styles from './styles.module.scss'
@@ -9,6 +10,7 @@ interface SubscribeButtonProps {
 
 export function SubscribeButton({priceId} : SubscribeButtonProps){
     const {data: session} = useSession();
+    const route = useRouter()
 
     //verifies if user is logged in already to create Stripe's checkout session
     async function handeleSubscribe(){
@@ -18,6 +20,10 @@ export function SubscribeButton({priceId} : SubscribeButtonProps){
         return
     }
 
+    if (session.activeSubscription){
+        route.push('/posts')
+        return;
+    }
     
     // checkout session creation
     try {
